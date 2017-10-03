@@ -58,8 +58,8 @@ object App {
 
   def main(args: Array[String]): Unit = {
     val spark = SparkSession.builder
-      .appName("spark-kafka-streaming-example")
-      .master("local[*]")
+      .appName("au-hackathon-streaming-app")
+      //.master("local[*]")
       .getOrCreate
 
     val streaming = new StreamingContext(spark.sparkContext, Seconds(config.getStreaming.getWindow))
@@ -88,16 +88,6 @@ object App {
         StructField("rate", FloatType) ::
         StructField("dt", TimestampType) :: Nil
     )
-
-    val host = config.getStreaming.getDb.getHost
-    val db = config.getStreaming.getDb.getDb
-    val url = s"jdbc:mysql://$host/$db"
-    val table = config.getStreaming.getDb.getTable
-
-    val props = new Properties
-    props.setProperty("driver", "com.mysql.jdbc.Driver")
-    props.setProperty("user", config.getStreaming.getDb.getUser)
-    props.setProperty("password", config.getStreaming.getDb.getPass)
 
     // just alias for simplicity
     type Record = ConsumerRecord[String, String]

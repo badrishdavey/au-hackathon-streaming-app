@@ -15,7 +15,7 @@ Java 1.8 or newer version required because lambda expression used for few cases
 First of all, clone the git repository,
 
 ```bash
-$ git clone git@github.com:trK54Ylmz/kafka-spark-streaming-example.git
+$ git clone https://github.com/badrishdavey/au-hackathon-streaming-app.git
 ```
 
 after you need to use Maven for creating uber jar files,
