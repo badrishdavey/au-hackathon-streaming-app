@@ -22,7 +22,6 @@ import com.test.config.ConfigurationFactory;
 import com.test.config.objects.Config;
 import com.test.producer.Producer;
 import com.test.utils.JsonUtils;
-
 import org.apache.log4j.Logger;
 
 import java.util.Random;
@@ -47,29 +46,16 @@ public class Run {
         // sleep time as milliseconds for each step
         int sleep = RANDOM.nextInt(CONFIG.getGenerator().getRandomRange()) + 10;
 
-        RecordBean record;
-        while (true) {
+        for (;;) {
             try {
-                record = generate();
-                producer.produce(record.getType().name(), JsonUtils.serialize(record));
+                RecordBean record = RecordBean.generate();
+                producer.produce(record.transaction_id.toString(), JsonUtils.serialize(record));
 
                 Thread.sleep(sleep);
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 LOGGER.error(t.getMessage(), t);
             }
         }
-    }
-
-    /**
-     * Generates random record
-     *
-     * @return Returns record object with random values
-     */
-    private static RecordBean generate() {
-        RecordBean data = new RecordBean();
-        data.setType(RecordBean.Types.fromNumeric(RANDOM.nextInt(6)));
-        data.setValue(RANDOM.nextFloat() * 1000);
-
-        return data;
     }
 }

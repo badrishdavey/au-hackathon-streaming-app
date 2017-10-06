@@ -40,12 +40,6 @@ object App {
 
   private[this] val config = ConfigurationFactory.load()
 
-  /**
-    * Json decode UDF function
-    *
-    * @param text the encoded JSON string
-    * @return Returns record bean
-    */
   def jsonDecode(text: String): RecordBean = {
     try {
       JsonUtils.deserialize(text, classOf[RecordBean])
@@ -62,12 +56,8 @@ object App {
       //.master("local[*]")
       .getOrCreate
 
-    val streaming = new StreamingContext(spark.sparkContext, Seconds(config.getStreaming.getWindow))
-
-    val servers = config.getProducer.getHosts.toArray.mkString(",")
-
     val params = Map[String, Object](
-      "bootstrap.servers" -> servers,
+      "bootstrap.servers" -> config.getProducer.getHosts.toArray.mkString(","),
       "key.deserializer" -> classOf[StringDeserializer],
       "value.deserializer" -> classOf[StringDeserializer],
       "auto.offset.reset" -> "latest",
@@ -75,53 +65,40 @@ object App {
       "enable.auto.commit" -> (false: java.lang.Boolean)
     )
 
-    // topic names which will be read
-    val topics = Array(config.getProducer.getTopic)
-
-    // create kafka direct stream object
     val stream = KafkaUtils.createDirectStream[String, String](
-      streaming, PreferBrokers, Subscribe[String, String](topics, params))
-
-    // our table has 3 fields called market (varchar), rate (float) and dt (datetime etc.)
-    val schema = StructType(
-      StructField("market", StringType) ::
-        StructField("rate", FloatType) ::
-        StructField("dt", TimestampType) :: Nil
+      new StreamingContext(spark.sparkContext, Seconds(config.getStreaming.getWindow)),
+      PreferBrokers,
+      Subscribe[String, String](Array(config.getProducer.getTopic), params)
     )
 
-    // just alias for simplicity
-    type Record = ConsumerRecord[String, String]
-
-    stream.foreachRDD((rdd: RDD[Record]) => {
-      // convert string to PoJo and generate rows as tuple group
-      val pairs = rdd
-        .map(row => (row.timestamp(), jsonDecode(row.value())))
-        .map(row => (row._2.getType.name(), (1, row._2.getValue, row._1)))
-
-      /**
-        * aggregate data by market type
-        *
-        * tuple has 3 items,
-        * the first one is counter value and this value is 1,
-        * second one is the rate and received from Kafka,
-        * third one is event time. for instance `2017-05-12 16:00:00`
-        *
-        * in the map,
-        * method <code>f._1</code> is market name,
-        * we divide total rate to total item count <code>f._2._2 / f._2._1</code>
-        * as you can see <code>f._2._3</code> is average event time
-        **/
-      val flatten = pairs
-        .reduceByKey((x, y) => (x._1 + y._1, x._2 + y._2, (y._3 + x._3) / 2))
-        .map(f => Row.fromSeq(Seq(f._1, f._2._2 / f._2._1, new Timestamp(f._2._3))))
-
-      // create sql context from active spark context
-      val sql = spark.sqlContext
-
-      // write aggregated results to database
-      // only one partition required for better visualisation,
-      // better to look at https://goo.gl/iBdNDl
-      sql.createDataFrame(flatten, schema)
+    stream.foreachRDD((rdd: RDD[ConsumerRecord[String, String]]) => {
+      spark.sqlContext.createDataFrame(
+        rdd.map(_.value())
+          .map(jsonDecode)
+          .map(row => Row.fromSeq(Seq(
+            row.account_id,
+            row.customer_id,
+            row.amount,
+            row.country,
+            row.date,
+            row.merchant_name,
+            row.rewards_earned,
+            row.transaction_id,
+            row.transaction_row_id,
+            row.zipcode
+        ))), StructType(
+          StructField("account_id", StringType) ::
+          StructField("customer_id", StringType) ::
+          StructField("amount", DoubleType) ::
+          StructField("country", StringType) ::
+          StructField("date", StringType) ::
+          StructField("merchant_name", StringType) ::
+          StructField("rewards_earned", DoubleType) ::
+          StructField("transaction_id", StringType) ::
+          StructField("transaction_row_id", IntegerType) ::
+          StructField("zipcode", StringType) ::
+          Nil
+      ))
         .show()
     })
 

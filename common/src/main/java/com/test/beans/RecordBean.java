@@ -18,57 +18,42 @@
 package com.test.beans;
 
 import java.io.Serializable;
+import java.util.Random;
 
 public class RecordBean implements Serializable {
-    public enum Types {
-        africa, asia, europe, north_america, oceania, south_america;
+    public String account_id;
+    public String customer_id;
+    public Double amount;
+    public String country;
+    public String date;
+    public String merchant_name;
+    public Double rewards_earned;
+    public String transaction_id;
+    public Integer transaction_row_id;
+    public String zipcode;
 
-        public static Types fromNumeric(int index) {
-            switch (index) {
-                default:
-                    return null;
-                case 0:
-                    return Types.africa;
-                case 1:
-                    return Types.asia;
-                case 2:
-                    return Types.europe;
-                case 3:
-                    return Types.north_america;
-                case 4:
-                    return Types.oceania;
-                case 5:
-                    return Types.south_america;
-            }
+    private static String numDigits(int x) {
+        Random rng = new Random();
+        String ans = "";
+        for (int i = 0; i < x; i++) {
+            ans += rng.nextInt(10);
         }
+        return ans;
     }
 
-    private Types type;
-
-    private float value;
-
-    public RecordBean() {
-        // default constructor for default instantiate
-    }
-
-    public RecordBean(Types type, float value) {
-        this.type = type;
-        this.value = value;
-    }
-
-    public Types getType() {
-        return type;
-    }
-
-    public void setType(Types type) {
-        this.type = type;
-    }
-
-    public float getValue() {
-        return value;
-    }
-
-    public void setValue(float value) {
-        this.value = value;
+    public static RecordBean generate() {
+        Random rng = new Random();
+        RecordBean data = new RecordBean();
+        data.account_id = numDigits(9);
+        data.customer_id = numDigits(10);
+        data.amount = Math.abs(rng.nextGaussian() * 1000);
+        data.country = "United States";
+        data.date = "11/5/2016";
+        data.merchant_name = "Yodoo";
+        data.rewards_earned = data.amount / 100;
+        data.transaction_id = numDigits(9);
+        data.transaction_row_id = rng.nextInt(1000);
+        data.zipcode = numDigits(5);
+        return data;
     }
 }
