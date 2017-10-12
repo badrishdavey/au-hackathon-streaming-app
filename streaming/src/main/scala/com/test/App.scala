@@ -38,8 +38,6 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 object App {
   private[this] lazy val logger = Logger.getLogger(getClass)
 
-  private[this] val config = ConfigurationFactory.load()
-
   def jsonDecode(text: String): RecordBean = {
     try {
       JsonUtils.deserialize(text, classOf[RecordBean])
@@ -51,13 +49,17 @@ object App {
   }
 
   def main(args: Array[String]): Unit = {
+    val hosts = args(0)
+    val topic = args(1)
+    val interval = args(2).toInt
+
     val spark = SparkSession.builder
       .appName("au-hackathon-streaming-app")
       //.master("local[*]")
       .getOrCreate
 
     val params = Map[String, Object](
-      "bootstrap.servers" -> config.getProducer.getHosts.toArray.mkString(","),
+      "bootstrap.servers" -> hosts,
       "key.deserializer" -> classOf[StringDeserializer],
       "value.deserializer" -> classOf[StringDeserializer],
       "auto.offset.reset" -> "latest",
@@ -65,10 +67,12 @@ object App {
       "enable.auto.commit" -> (false: java.lang.Boolean)
     )
 
+    val context = new StreamingContext(spark.sparkContext, Seconds(interval))
+
     val stream = KafkaUtils.createDirectStream[String, String](
-      new StreamingContext(spark.sparkContext, Seconds(config.getStreaming.getWindow)),
+      context,
       PreferBrokers,
-      Subscribe[String, String](Array(config.getProducer.getTopic), params)
+      Subscribe[String, String](Array(topic), params)
     )
 
     stream.foreachRDD((rdd: RDD[ConsumerRecord[String, String]]) => {
@@ -77,35 +81,51 @@ object App {
           .map(jsonDecode)
           .map(row => Row.fromSeq(Seq(
             row.account_id,
-            row.customer_id,
             row.amount,
-            row.country,
-            row.date,
-            row.merchant_name,
+            row.card_number,
+            row.card_type,
+            row.customer_id,
+            row.customer_zipcode,
+            row.date_day,
+            row.date_month,
+            row.date_year,
+            row.email,
+            row.first_name,
+            row.gender,
+            row.is_married,
+            row.last_name,
+            row.merchant,
             row.rewards_earned,
             row.transaction_id,
-            row.transaction_row_id,
-            row.zipcode
+            row.transaction_zipcode
         ))), StructType(
           StructField("account_id", StringType) ::
+          StructField("amount", StringType) ::
+          StructField("card_number", StringType) ::
+          StructField("card_type", StringType) ::
           StructField("customer_id", StringType) ::
-          StructField("amount", DoubleType) ::
-          StructField("country", StringType) ::
-          StructField("date", StringType) ::
-          StructField("merchant_name", StringType) ::
-          StructField("rewards_earned", DoubleType) ::
+          StructField("customer_zipcode", StringType) ::
+          StructField("date_day", StringType) ::
+          StructField("date_month", StringType) ::
+          StructField("date_year", StringType) ::
+          StructField("email", StringType) ::
+          StructField("first_name", StringType) ::
+          StructField("gender", StringType) ::
+          StructField("is_married", StringType) ::
+          StructField("last_name", StringType) ::
+          StructField("merchant", StringType) ::
+          StructField("rewards_earned", StringType) ::
           StructField("transaction_id", StringType) ::
-          StructField("transaction_row_id", IntegerType) ::
-          StructField("zipcode", StringType) ::
+          StructField("transaction_zipcode", StringType) ::
           Nil
       ))
         .show()
     })
 
     // create streaming context and submit streaming jobs
-    streaming.start()
+    context.start()
 
     // wait to killing signals etc.
-    streaming.awaitTermination()
+    context.awaitTermination()
   }
 }

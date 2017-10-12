@@ -1,83 +1,32 @@
-# kafka &middot; spark streaming example
+# Deploying onto AWS EMR
 
+It is recommended that the Spark job takes its configuration through the command line
 
-### Prerequisites
+Upload the Spark jar to S3
+![AWS S3 jar upload image](https://github.com/badrishdavey/au-hackathon-streaming-app/raw/master/AWS_S3_Upload.png "AWS S3 jar upload")
 
-Java 1.8 or newer version required because lambda expression used for few cases
+Create the EMR cluster
+Name the cluster after your team
+Select Spark as the Software configuration
+Select the Hackathon pem file for the EC2 key pair
+![AWS EMR create cluster image](https://github.com/badrishdavey/au-hackathon-streaming-app/raw/master/AWS_EMR_Create_Cluster.png "AWS EMR Create Cluster")
 
-1. Java >= 1.8 (Oracle JDK has been tested)
-2. Maven >= 3
-3. Apache Spark >= 2.0.2
-4. Kafka >= 0.10.1.0
+Wait for the EMR cluster to initialize
+![AWS EMR cluster initialized image](https://github.com/badrishdavey/au-hackathon-streaming-app/raw/master/AWS_EMR_Cluster_Initialized.png "AWS EMR Cluster Initialized")
 
-### Installation
-
-First of all, clone the git repository,
-
-```bash
-$ git clone https://github.com/badrishdavey/au-hackathon-streaming-app.git
+Download the Spark jar from S3 onto the EMR master
+```
+ssh -i <Hackathon pem file> hadoop@<EMR address>
+aws s3 cp s3://auhackathon/omar/au-hackathon-streaming-0.1.jar .
 ```
 
-after you need to use Maven for creating uber jar files,
-
-```bash
-$ mvn clean package -DskipTests
+Navigate to the Steps tab for the EMR cluster
+Add step
 ```
-
-until that moment we had created jar files and now we'll install Kafka and MySQL,
-
-```bash
-$ wget http://www-us.apache.org/dist/kafka/0.10.1.0/kafka_2.11-0.10.1.0.tgz
-$ # or wget http://www-eu.apache.org/dist/kafka/0.10.1.0/kafka_2.11-0.10.1.0.tgz
-$ tar -xf kafka_2.11-0.10.1.0.tgz
-$ cd kafka_2.11-0.10.1.0
-$ nohup ./bin/zookeeper-server-start.sh ./config/zookeeper.properties > /tmp/kafka-zookeeper.out 2>&1 &
-$ nohup ./bin/kafka-server-start.sh ./config/server.properties > /tmp/kafka-server.out 2>&1 &
-```
-
-
-### Usage
-
-1 - Start the Spark streaming service and it'll process events from Kafka topic to MySQL,
-
-```bash
-$ cd kafka-spark-streaming-example
-$ java -Dconfig=./config/common.conf -jar streaming/target/spark-streaming-0.1.jar
-```
-
-2 - Start the Kafka producer and it'll write events to Kafka topic,
-
-```bash
-$ java -Dconfig=./config/common.conf -jar producer/target/kafka-producer-0.1.jar
-```
-
-3 - Start the web server so you can see the dashboard
-
-```bash
-$ java -Dconfig=./config/common.conf -jar web/target/web-0.1.jar
-```
-
-4 - If everything look fine, please enter the dashboard address,
-
-```bash
-open http://localhost:8080 # default value : 8080
-```
-
-5 - Create topic
-
-```
-bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 4 --topic spark_sql_test_topic
-```
-
-
-
-5 - Submitting spark submit
-```
-/Users/shiv/Downloads/spark-2.2.0-bin-hadoop2.7/bin/spark-submit \
---master spark://Badrishs-MBP.home:7077 \
---deploy-mode client \
---conf spark.driver.extraJavaOptions="-Dconfig=/Users/shiv/development/research/au-hackathon/kafka-spark-streaming-example/config/common.conf" \
---conf spark.executor.extraJavaOptions="-Dconfig=/Users/shiv/development/research/au-hackathon/kafka-spark-streaming-example/config/common.conf" \
---class com.test.App \
-streaming/target/spark-streaming-0.1.jar
+Step type: Spark application
+Deploy mode: Client
+Spark-submit options: --master yarn --class <your driver class>
+Application location: <absolute path to your jarfile in the EMR master>
+Arguments: <your command line arguments>
+Action on failure: Continue
 ```

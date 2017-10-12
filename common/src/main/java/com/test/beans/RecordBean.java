@@ -18,42 +18,49 @@
 package com.test.beans;
 
 import java.io.Serializable;
-import java.util.Random;
 
 public class RecordBean implements Serializable {
     public String account_id;
+    public String amount;
+    public String card_number;
+    public String card_type;
     public String customer_id;
-    public Double amount;
-    public String country;
-    public String date;
-    public String merchant_name;
-    public Double rewards_earned;
+    public String customer_zipcode;
+    public String date_day;
+    public String date_month;
+    public String date_year;
+    public String email;
+    public String first_name;
+    public String gender;
+    public String is_married;
+    public String last_name;
+    public String merchant;
+    public String rewards_earned;
     public String transaction_id;
-    public Integer transaction_row_id;
-    public String zipcode;
+    public String transaction_zipcode;
 
-    private static String numDigits(int x) {
-        Random rng = new Random();
-        String ans = "";
-        for (int i = 0; i < x; i++) {
-            ans += rng.nextInt(10);
-        }
-        return ans;
-    }
-
+//    private static String numDigits(int x) {
+//        Random rng = new Random();
+//        String ans = "";
+//        for (int i = 0; i < x; i++) {
+//            ans += rng.nextInt(10);
+//        }
+//        return ans;
+//    }
+//
     public static RecordBean generate() {
-        Random rng = new Random();
+//        Random rng = new Random();
         RecordBean data = new RecordBean();
-        data.account_id = numDigits(9);
-        data.customer_id = numDigits(10);
-        data.amount = Math.abs(rng.nextGaussian() * 1000);
-        data.country = "United States";
-        data.date = "11/5/2016";
-        data.merchant_name = "Yodoo";
-        data.rewards_earned = data.amount / 100;
-        data.transaction_id = numDigits(9);
-        data.transaction_row_id = rng.nextInt(1000);
-        data.zipcode = numDigits(5);
+//        data.account_id = numDigits(9);
+//        data.customer_id = numDigits(10);
+//        data.amount = "" + Math.abs(rng.nextGaussian() * 1000);
+//        data.country = "United States";
+//        data.date = "11/5/2016";
+//        data.merchant_name = "Yodoo";
+//        data.rewards_earned = data.amount.substring(0, data.amount.length() - 2) + "." + data.amount.substring(data.amount.length() - 2);
+//        data.transaction_id = numDigits(9);
+//        data.transaction_row_id = "" + rng.nextInt(1000);
+//        data.zipcode = numDigits(5);
         return data;
     }
 }
