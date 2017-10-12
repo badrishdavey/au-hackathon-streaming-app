@@ -6,8 +6,11 @@ Upload the Spark jar to S3
 ![AWS S3 jar upload image](https://github.com/badrishdavey/au-hackathon-streaming-app/raw/master/AWS_S3_Upload.png "AWS S3 jar upload")
 
 Create the EMR cluster
+
 Name the cluster after your team
+
 Select Spark as the Software configuration
+
 Select the Hackathon pem file for the EC2 key pair
 ![AWS EMR create cluster image](https://github.com/badrishdavey/au-hackathon-streaming-app/raw/master/AWS_EMR_Create_Cluster.png "AWS EMR Create Cluster")
 
