@@ -30,3 +30,4 @@ Application location: <absolute path to your jarfile in the EMR master>
 Arguments: <your command line arguments>
 Action on failure: Continue
 ```
+![AWS EMR Add Step image](https://github.com/badrishdavey/au-hackathon-streaming-app/raw/master/AWS_EMR_Add_Step.png "AWS EMR Add Step")
