@@ -86,9 +86,6 @@ object App {
             row.card_type,
             row.customer_id,
             row.customer_zipcode,
-            row.date_day,
-            row.date_month,
-            row.date_year,
             row.email,
             row.first_name,
             row.gender,
@@ -97,7 +94,8 @@ object App {
             row.merchant,
             row.rewards_earned,
             row.transaction_id,
-            row.transaction_zipcode
+            row.transaction_zipcode,
+            row.tx_time
         ))), StructType(
           StructField("account_id", StringType) ::
           StructField("amount", StringType) ::
@@ -105,9 +103,6 @@ object App {
           StructField("card_type", StringType) ::
           StructField("customer_id", StringType) ::
           StructField("customer_zipcode", StringType) ::
-          StructField("date_day", StringType) ::
-          StructField("date_month", StringType) ::
-          StructField("date_year", StringType) ::
           StructField("email", StringType) ::
           StructField("first_name", StringType) ::
           StructField("gender", StringType) ::
@@ -117,6 +112,7 @@ object App {
           StructField("rewards_earned", StringType) ::
           StructField("transaction_id", StringType) ::
           StructField("transaction_zipcode", StringType) ::
+          StructField("tx_time", StringType) ::
           Nil
       ))
         .show()

@@ -26,9 +26,6 @@ public class RecordBean implements Serializable {
     public String card_type;
     public String customer_id;
     public String customer_zipcode;
-    public String date_day;
-    public String date_month;
-    public String date_year;
     public String email;
     public String first_name;
     public String gender;
@@ -38,6 +35,7 @@ public class RecordBean implements Serializable {
     public String rewards_earned;
     public String transaction_id;
     public String transaction_zipcode;
+    public String tx_time;
 
 //    private static String numDigits(int x) {
 //        Random rng = new Random();
