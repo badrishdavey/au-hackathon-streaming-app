@@ -1,9 +1,26 @@
+# Compiling the code
+
+## Step 1
+
+Clone this repository into local
+> git clone https://github.com/badrishdavey/au-hackathon-streaming-app.git
+
+Cd into the directory
+> cd au-hackathon-streaming-app
+
+Compile the code into jar
+> mvn clean package
+
+---
+
+## Step 2
+
+Upload the Spark jar to your team directory in S3
+![AWS S3 jar upload image](https://github.com/badrishdavey/au-hackathon-streaming-app/raw/master/AWS_S3_Upload.png "AWS S3 jar upload")
+
 # Deploying onto AWS EMR
 
-It is recommended that the Spark job takes its configuration through the command line
-
-Upload the Spark jar to S3
-![AWS S3 jar upload image](https://github.com/badrishdavey/au-hackathon-streaming-app/raw/master/AWS_S3_Upload.png "AWS S3 jar upload")
+## Step 1
 
 Create the EMR cluster
 
@@ -14,23 +31,35 @@ Select Spark as the Software configuration
 Select the Hackathon pem file for the EC2 key pair
 ![AWS EMR create cluster image](https://github.com/badrishdavey/au-hackathon-streaming-app/raw/master/AWS_EMR_Create_Cluster.png "AWS EMR Create Cluster")
 
+---
+
+## Step 2
+
 Wait for the EMR cluster to initialize
 ![AWS EMR cluster initialized image](https://github.com/badrishdavey/au-hackathon-streaming-app/raw/master/AWS_EMR_Cluster_Initialized.png "AWS EMR Cluster Initialized")
 
+---
+
+## Step 3
+
 Download the Spark jar from S3 onto the EMR master
 ```
-ssh -i <Hackathon pem file> hadoop@<EMR address>
+ssh -i ~/AU_Hackathon.pem hadoop@<EMR address>
 aws s3 cp s3://auhackathon/omar/au-hackathon-streaming-0.1.jar .
 ```
+
+---
+
+## Step 4
 
 Navigate to the Steps tab for the EMR cluster
 Add step
 ```
 Step type: Spark application
 Deploy mode: Client
-Spark-submit options: --master yarn --class <your driver class>
-Application location: <absolute path to your jarfile in the EMR master>
-Arguments: <your command line arguments>
+Spark-submit options: --master yarn --class com.test.App
+Application location: /home/hadoop/au-hackathon-streaming-0.1.jar
+Arguments: ec2-54-174-211-86.compute-1.amazonaws.com:9092 au_hackathon 5
 Action on failure: Continue
 ```
 ![AWS EMR Add Step image](https://github.com/badrishdavey/au-hackathon-streaming-app/raw/master/AWS_EMR_Add_Step.png "AWS EMR Add Step")
