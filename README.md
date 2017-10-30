@@ -31,8 +31,8 @@ Set environment variable KAFKA_HOME to the installation path
 ### Step 5
 
 Run the shell script
-> $KAFKA_HOME/bin/kafka-console-consumer.sh \
->   --bootstrap-server ec2-54-174-211-86.compute-1.amazonaws.com:9092 \
+> $KAFKA_HOME/bin/kafka-console-consumer.sh \\
+>   --bootstrap-server ec2-54-174-211-86.compute-1.amazonaws.com:9092 \\
 >   --topic au_hackathon  
 
 # Using this project
