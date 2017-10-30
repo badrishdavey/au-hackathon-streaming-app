@@ -1,6 +1,6 @@
 There are two ways of listening to the data in Kafka 
-1) Using the Kafka console echo consumer
-2) Using this Spark project
+1) [Using the Kafka console echo consumer](https://github.com/badrishdavey/au-hackathon-streaming-app#using-the-kafka-console-echo-consumer)
+2) [Using this Spark project](https://github.com/badrishdavey/au-hackathon-streaming-app#compiling-the-code)
 
 # Using the Kafka console echo consumer
 
