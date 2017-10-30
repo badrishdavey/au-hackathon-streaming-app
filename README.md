@@ -14,24 +14,32 @@ Download Kafka v0.11.0.1 for Scala 2.11
 ### Step 2
 
 Move to desired location
-> cd ~/Downloads
-> mkdir -p /usr/local/Cellar/kafka/0.11.0.1
-> cp 
+```
+cd ~/Downloads
+mkdir -p /usr/local/Cellar/kafka/0.11.0.1
+cp 
+```
 
 ### Step 3
 
 Unzip the archive
-> tar -zxvf kafka_2.11-0.11.0.1.tgz
+```
+tar -zxvf kafka_2.11-0.11.0.1.tgz
+```
 
 ### Step 4
 
 Set environment variable KAFKA_HOME to the installation path
-> export KAFKA_HOME=/usr/local/Cellar/kafka/0.11.0.1
+```
+export KAFKA_HOME=/usr/local/Cellar/kafka/0.11.0.1
+```
 
 ### Step 5
 
 Run the shell script
-> $KAFKA_HOME/bin/kafka-console-consumer.sh --bootstrap-server ec2-54-174-211-86.compute-1.amazonaws.com:9092 --topic au_hackathon  
+```
+$KAFKA_HOME/bin/kafka-console-consumer.sh --bootstrap-server ec2-54-174-211-86.compute-1.amazonaws.com:9092 --topic au_hackathon
+```
 
 # Using this project
 
@@ -40,13 +48,19 @@ Run the shell script
 ### Step 1
 
 Clone this repository into local
-> git clone https://github.com/badrishdavey/au-hackathon-streaming-app.git
+```
+git clone https://github.com/badrishdavey/au-hackathon-streaming-app.git
+```
 
 Cd into the directory
-> cd au-hackathon-streaming-app
+```
+cd au-hackathon-streaming-app
+```
 
 Compile the code into jar
-> mvn clean package
+```
+mvn clean package
+```
 
 ### Step 2
 
@@ -74,8 +88,10 @@ Wait for the EMR cluster to initialize
 ### Step 3
 
 Download the Spark jar from S3 onto the EMR master
-> ssh -i ~/AU_Hackathon.pem hadoop@ec2-54-159-186-164.compute-1.amazonaws.com
-> aws s3 cp s3://auhackathon/omar/au-hackathon-streaming-0.1.jar .
+```
+ssh -i ~/AU_Hackathon.pem hadoop@ec2-54-159-186-164.compute-1.amazonaws.com
+aws s3 cp s3://auhackathon/omar/au-hackathon-streaming-0.1.jar .
+```
 
 ### Step 4
 
