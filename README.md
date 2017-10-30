@@ -77,7 +77,7 @@ Wait for the EMR cluster to initialize
 
 Download the Spark jar from S3 onto the EMR master
 ```
-ssh -i ~/AU_Hackathon.pem hadoop@<EMR address>
+ssh -i ~/AU_Hackathon.pem hadoop@ec2-54-159-186-164.compute-1.amazonaws.com
 aws s3 cp s3://auhackathon/omar/au-hackathon-streaming-0.1.jar .
 ```
 
