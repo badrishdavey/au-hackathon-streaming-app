@@ -38,7 +38,7 @@ export KAFKA_HOME=/usr/local/Cellar/kafka/0.11.0.1
 
 Run the shell script
 ```
-$KAFKA_HOME/bin/kafka-console-consumer.sh --bootstrap-server ec2-54-174-211-86.compute-1.amazonaws.com:9092 --topic au_hackathon
+$KAFKA_HOME/bin/kafka-console-consumer.sh --bootstrap-server kafkastreaming.capitalonehackathon.com:9092 --topic au_hackathon
 ```
 
 # Using this project
@@ -102,7 +102,17 @@ Step type: Spark application
 Deploy mode: Client
 Spark-submit options: --master yarn --class com.test.App
 Application location: /home/hadoop/au-hackathon-streaming-0.1.jar
-Arguments: ec2-54-174-211-86.compute-1.amazonaws.com:9092 au_hackathon 5
+Arguments: kafkastreaming.capitalonehackathon.com:9092 au_hackathon 5
 Action on failure: Continue
 ```
 ![AWS EMR Add Step image](https://github.com/badrishdavey/au-hackathon-streaming-app/raw/master/AWS_EMR_Add_Step.png "AWS EMR Add Step")
+
+### Step 5
+
+Wait for the Spark job to start, approximately 5 minutes
+
+Click on View logs
+
+Click on stdout
+
+![AWS EMR Success image](https://github.com/badrishdavey/au-hackathon-streaming-app/raw/master/AWS_EMR_Success.png "AWS EMR Success")
